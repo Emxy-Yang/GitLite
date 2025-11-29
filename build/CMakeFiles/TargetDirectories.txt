@@ -1,0 +1,3 @@
+/mnt/d/study/C Project/git/gitlite/build/CMakeFiles/gitlite.dir
+/mnt/d/study/C Project/git/gitlite/build/CMakeFiles/edit_cache.dir
+/mnt/d/study/C Project/git/gitlite/build/CMakeFiles/rebuild_cache.dir

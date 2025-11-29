@@ -70,7 +70,7 @@ public:
     // File existence check
     static bool exists(const std::string& path);
     static bool isFile(const std::string& path);
-    static bool isDirectory(const std::string& path);
+    static bool   isDirectory(const std::string& path);
     static bool createDirectories(const std::string& path);
 };
 
