@@ -100,11 +100,43 @@ void Commit::deserialize(const std::string &content) {
         if (!this->Commit_Metadata.message.empty()) {
             this->Commit_Metadata.message += "\n";
         }
-        else {
-            this->Commit_Metadata.message += all_lines[idx];
-        }
+        this->Commit_Metadata.message += all_lines[idx];
         idx++;
     }
 }
+
+std::string Blob::serialize() {
+    std::stringstream final_ss;
+
+    size_t size = content.size();
+
+    final_ss<<"Blob "<<size<<'\0'<<'\n';
+    final_ss<<content<<'\n';
+
+    return final_ss.str();
+}
+
+void Blob::deserialize(const std::string &_content) {
+    this->content.clear();
+
+    //read all
+    std::stringstream ss(_content);
+    std::string line;
+    std::vector<std::string> all_lines;
+    while (std::getline(ss, line)) {
+        all_lines.push_back(line);
+    }
+    if (all_lines.empty()) return;
+
+    int idx = 1;
+    while (idx < all_lines.size()) {
+        if (!this->content.empty()) {
+            this->content += '\n';
+        }
+        this->content += all_lines[idx];
+        ++idx;
+    }
+}
+
 
 

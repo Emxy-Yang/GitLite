@@ -2,12 +2,11 @@
 #define GITLITE_REPOSITORY_HPP
 #include<string>
 #include<vector>
+#include"ObjectDataBase.hpp"
+#include"index.hpp"
 
 class Repository {
-private:
-
 public:
-    //Repository();
 
     void init();
 
@@ -15,8 +14,8 @@ public:
     //
     // void rmRemote(std::vector<std::string>::const_reference value);
     //
-    // void add(std::vector<std::string>::const_reference value);
-    //
+    void add(std::string &);
+
     // void commit(std::vector<std::string>::const_reference value);
     //
     // void rm(std::vector<std::string>::const_reference value);
@@ -49,7 +48,7 @@ public:
     //
     // void pull(std::vector<std::string>::const_reference value, std::vector<std::string>::const_reference basic_string);
     //
-    // static std::string & getGitliteDir();
+    static std::string  getGitliteDir();
 };
 
 #endif //GITLITE_REPOSITORY_HPP

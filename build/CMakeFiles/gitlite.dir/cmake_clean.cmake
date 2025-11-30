@@ -13,6 +13,8 @@ file(REMOVE_RECURSE
   "CMakeFiles/gitlite.dir/src/Repository.cpp.o.d"
   "CMakeFiles/gitlite.dir/src/Utils.cpp.o"
   "CMakeFiles/gitlite.dir/src/Utils.cpp.o.d"
+  "CMakeFiles/gitlite.dir/src/index.cpp.o"
+  "CMakeFiles/gitlite.dir/src/index.cpp.o.d"
   "gitlite"
   "gitlite.pdb"
 )

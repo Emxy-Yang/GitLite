@@ -4,11 +4,11 @@
 #include<Repository.hpp>
 #include "include/Utils.h"
 
-// void checkCWD() {
-//     if (!Utils::isDirectory(Repository::getGitliteDir())) {
-//         Utils::exitWithMessage("Not in an initialized Gitlite directory.");
-//     }
-// }
+void checkCWD() {
+    if (!Utils::isDirectory(Repository::getGitliteDir())) {
+        Utils::exitWithMessage("Not in an initialized Gitlite directory.");
+    }
+}
 
 void checkNoArgs(const std::vector<std::string>& args) {
     if (args.empty()) {
@@ -46,11 +46,11 @@ int main(int argc, char* argv[]) {
     //     checkArgsNum(args, 2);
     //     bloop.rmRemote(args[1]);
     // }
-    // else if (firstArg == "add") {
-    //     checkCWD();
-    //     checkArgsNum(args, 2);
-    //     bloop.add(args[1]);
-    // }
+    else if (firstArg == "add") {
+        checkCWD();
+        checkArgsNum(args, 2);
+        bloop.add(args[1]);
+    }
     // else if (firstArg == "commit") {
     //     checkCWD();
     //     checkArgsNum(args, 2);

@@ -297,6 +297,30 @@ src/Utils.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gitlite.dir/build.make CMakeFiles/gitlite.dir/src/Utils.cpp.s
 .PHONY : src/Utils.cpp.s
 
+src/index.o: src/index.cpp.o
+.PHONY : src/index.o
+
+# target to build an object file
+src/index.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gitlite.dir/build.make CMakeFiles/gitlite.dir/src/index.cpp.o
+.PHONY : src/index.cpp.o
+
+src/index.i: src/index.cpp.i
+.PHONY : src/index.i
+
+# target to preprocess a source file
+src/index.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gitlite.dir/build.make CMakeFiles/gitlite.dir/src/index.cpp.i
+.PHONY : src/index.cpp.i
+
+src/index.s: src/index.cpp.s
+.PHONY : src/index.s
+
+# target to generate assembly for a file
+src/index.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/gitlite.dir/build.make CMakeFiles/gitlite.dir/src/index.cpp.s
+.PHONY : src/index.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -327,6 +351,9 @@ help:
 	@echo "... src/Utils.o"
 	@echo "... src/Utils.i"
 	@echo "... src/Utils.s"
+	@echo "... src/index.o"
+	@echo "... src/index.i"
+	@echo "... src/index.s"
 .PHONY : help
 
 

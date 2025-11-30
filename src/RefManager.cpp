@@ -36,7 +36,6 @@ std::string RefManager::getCurrentBranchName() {
     std::string content = Utils::readContentsAsString(HEAD_FILE);
     if (content.substr(0, 5) == "ref: ") {
         // 提取 refs/heads/master 中的 master
-        // 假设路径总是标准的 refs/heads/
         size_t lastSlash = content.find_last_of('/');
         std::string name = content.substr(lastSlash + 1);
         if (!name.empty() && name.back() == '\n') name.pop_back();
@@ -70,7 +69,7 @@ void RefManager::createBranch(const std::string& branchName) {
 void RefManager::removeBranch(const std::string& branchName) {
     std::string path = getBranchPath(branchName);
 
-    // 1检查分支是否存在
+    // 检查分支是否存在
     if (!Utils::exists(path)) {
         Utils::exitWithMessage("A branch with that name does not exist.");
     }

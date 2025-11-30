@@ -15,6 +15,7 @@ set(CMAKE_DEPENDS_DEPENDENCY_FILES
   "/mnt/d/study/C Project/git/gitlite/src/RefManager.cpp" "CMakeFiles/gitlite.dir/src/RefManager.cpp.o" "gcc" "CMakeFiles/gitlite.dir/src/RefManager.cpp.o.d"
   "/mnt/d/study/C Project/git/gitlite/src/Repository.cpp" "CMakeFiles/gitlite.dir/src/Repository.cpp.o" "gcc" "CMakeFiles/gitlite.dir/src/Repository.cpp.o.d"
   "/mnt/d/study/C Project/git/gitlite/src/Utils.cpp" "CMakeFiles/gitlite.dir/src/Utils.cpp.o" "gcc" "CMakeFiles/gitlite.dir/src/Utils.cpp.o.d"
+  "/mnt/d/study/C Project/git/gitlite/src/index.cpp" "CMakeFiles/gitlite.dir/src/index.cpp.o" "gcc" "CMakeFiles/gitlite.dir/src/index.cpp.o.d"
   )
 
 # Targets to which this target links which contain Fortran sources.

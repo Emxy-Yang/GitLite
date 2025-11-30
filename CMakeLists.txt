@@ -15,7 +15,9 @@ add_executable(gitlite
         src/ObjectDataBase.cpp
         include/ObjectDataBase.hpp
         src/RefManager.cpp
-        include/RefManager.hpp)
+        include/RefManager.hpp
+        src/index.cpp
+        include/index.hpp)
 
 
 target_include_directories(gitlite

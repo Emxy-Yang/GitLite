@@ -26,3 +26,37 @@ void Repository::init() {
     }
 }
 
+void Repository::add(std::string & file) {
+    if (!Utils::isFile(file)) {
+        Utils::exitWithMessage("File Doesn't Exist");
+    }
+
+    //read fileContent
+    std::string fileContent;
+    try {
+        fileContent = Utils::readContentsAsString(file);
+    } catch (...) {
+        Utils::exitWithMessage("Error reading file: " + file);
+    }
+
+    //init Bolb
+    Blob add_blob(fileContent);
+
+    //init database
+    ObjectDatabase add_obj;
+    add_obj.writeObject(add_blob);
+
+    //refresh index and write index
+    index add_idx;
+    if (!add_idx.contains(file) || !add_idx.indentical(file,add_blob)) {
+        add_idx.add_entry(file,add_blob.get_hashid());
+
+        add_idx.write();
+    }
+}
+
+std::string  Repository::getGitliteDir() {
+    std::string _path = ".gitlite";
+    return _path;
+}
+

@@ -81,12 +81,12 @@ clean: CMakeFiles/gitlite.dir/clean
 CMakeFiles/gitlite.dir/all:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gitlite.dir/build.make CMakeFiles/gitlite.dir/depend
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/gitlite.dir/build.make CMakeFiles/gitlite.dir/build
-	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/mnt/d/study/C Project/git/gitlite/build/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8 "Built target gitlite"
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --progress-dir="/mnt/d/study/C Project/git/gitlite/build/CMakeFiles" --progress-num=1,2,3,4,5,6,7,8,9 "Built target gitlite"
 .PHONY : CMakeFiles/gitlite.dir/all
 
 # Build rule for subdir invocation for target.
 CMakeFiles/gitlite.dir/rule: cmake_check_build_system
-	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/d/study/C Project/git/gitlite/build/CMakeFiles" 8
+	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/d/study/C Project/git/gitlite/build/CMakeFiles" 9
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 CMakeFiles/gitlite.dir/all
 	$(CMAKE_COMMAND) -E cmake_progress_start "/mnt/d/study/C Project/git/gitlite/build/CMakeFiles" 0
 .PHONY : CMakeFiles/gitlite.dir/rule
