@@ -22,7 +22,7 @@ std::string Commit::serialize() {
     //1. serialize the blobs info
     body_ss << "blobs_of_commit:\n";
     for (const auto& obj: this->Blobs) {
-        body_ss << obj << "\n";
+        body_ss << obj.first <<" "<< obj.second << "\n";
     }
 
     //2. serialize father commit
@@ -75,7 +75,11 @@ void Commit::deserialize(const std::string &content) {
     if (idx < all_lines.size() && all_lines[idx] == "blobs_of_commit:") {
         idx++;
         while (all_lines[idx] != "father_commit:") {
-            Blobs.emplace_back(all_lines[idx]);
+            std::stringstream blobline(all_lines[idx]);
+            std::string path;
+            std::string blob_hash;
+            ss>>path>>blob_hash;
+            Blobs[path] = blob_hash;
             ++idx;
         }
     }else {
@@ -103,6 +107,14 @@ void Commit::deserialize(const std::string &content) {
         this->Commit_Metadata.message += all_lines[idx];
         idx++;
     }
+}
+
+std::string Commit::getBlobHash(const std::string& path) const {
+    auto it = Blobs.find(path);
+    if (it != Blobs.end()) {
+        return it->second;
+    }
+    return "";
 }
 
 std::string Blob::serialize() {
@@ -137,6 +149,8 @@ void Blob::deserialize(const std::string &_content) {
         ++idx;
     }
 }
+
+
 
 
 

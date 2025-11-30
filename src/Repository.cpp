@@ -43,16 +43,43 @@ void Repository::add(std::string & file) {
     Blob add_blob(fileContent);
 
     //init database
-    ObjectDatabase add_obj;
-    add_obj.writeObject(add_blob);
+    ObjectDatabase db;
+    std::string new_blob_hash = Utils::sha1(add_blob.serialize());
 
     //refresh index and write index
-    index add_idx;
-    if (!add_idx.contains(file) || !add_idx.indentical(file,add_blob)) {
-        add_idx.add_entry(file,add_blob.get_hashid());
+    index idx;
+    RefManager refManager;
+    std::string head_commit_hash = refManager.resolveHead();
 
-        add_idx.write();
+    std::string commit_blob_hash;
+
+    if (!head_commit_hash.empty()) {
+        auto commit_obj = db.readObject(head_commit_hash);
+        if (commit_obj) {
+            // convert gitobj to commit
+            auto head_commit =std::dynamic_pointer_cast<Commit>(commit_obj);
+
+            // find blob hash in current commit
+
+            if (head_commit) {
+                commit_blob_hash = head_commit->getBlobHash(file);
+            }
+        }
     }
+
+    //if identical
+    if (new_blob_hash == commit_blob_hash) {
+
+        if (idx.contains(file)) {
+            idx.rm_entry(file);
+            idx.write();
+        }
+        return;
+    }
+
+    db.writeObject(add_blob);
+    idx.add_entry(file, new_blob_hash);
+    idx.write();
 }
 
 std::string  Repository::getGitliteDir() {

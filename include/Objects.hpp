@@ -1,5 +1,6 @@
 #ifndef GITLITE_OBJECTS_HPP
 #define GITLITE_OBJECTS_HPP
+#include <map>
 #include <string>
 #include <vector>
 
@@ -33,12 +34,24 @@ class Commit:public GitLiteObject {
 private:
     MetaData Commit_Metadata;
     std::vector<std::string> Father_Commit;
-    std::vector<std::string> Blobs;
+    //std::vector<std::string> Blobs;
+    std::map<std::string, std::string> Blobs;
 public:
     Commit();
     //explicit Commit(MetaData , std::string , std::string);
     std::string serialize() override;
     void deserialize(const std::string &data) override;
+    std::string getBlobHash(const std::string& path) const ;
+
+    // add Blob
+    void addBlob(const std::string& path, const std::string& hash) {
+        Blobs[path] = hash;
+    }
+
+    // get blob
+    const std::map<std::string, std::string>& getBlobs() const {
+        return Blobs;
+    }
 };
 
 class Blob:public GitLiteObject {
