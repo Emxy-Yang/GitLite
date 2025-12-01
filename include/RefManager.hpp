@@ -15,6 +15,7 @@ private:
 public:
     void initManager(Commit& init_commit);
     std::string getBranchPath(const std::string& branchName) const;
+    void updateRef(const std::string& refName, const std::string& newHash);
 
     // 解析 HEAD
     std::string resolveHead();

@@ -117,6 +117,15 @@ std::string Commit::getBlobHash(const std::string& path) const {
     return "";
 }
 
+void Commit::setMetadata(std::string _message, std::string _time_stamp) {
+    MetaData tmp(std::move(_message),std::move(_time_stamp));
+    Commit_Metadata = std::move(tmp);
+}
+
+void Commit::addFather(const std::string &father_hash) {
+    Father_Commit.emplace_back(father_hash);
+}
+
 std::string Blob::serialize() {
     std::stringstream final_ss;
 

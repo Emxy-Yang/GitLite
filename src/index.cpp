@@ -66,5 +66,9 @@ void index::load() {
     }
 }
 
+void index::clear() {
+    entries.clear();
+}
+
 
 

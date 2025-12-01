@@ -72,6 +72,8 @@ public:
     static bool isFile(const std::string& path);
     static bool   isDirectory(const std::string& path);
     static bool createDirectories(const std::string& path);
+
+    static std::string getCurrentTimestamp();
 };
 
 #endif // UTILS_H

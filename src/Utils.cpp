@@ -1,4 +1,6 @@
 #include "../include/Utils.h"
+
+#include <chrono>
 #include <cstdlib>
 #include <iostream>
 #include <sys/stat.h>
@@ -334,4 +336,50 @@ bool Utils::createDirectories(const std::string& path) {
     }
     
     return mkdir(path.c_str(), 0755) == 0 || isDirectory(path);
+}
+
+std::string Utils::getCurrentTimestamp() {
+    // 获取当前时间点 (time_point)
+    auto now = std::chrono::system_clock::now();
+    // 转换为 std::time_t
+    std::time_t now_c = std::chrono::system_clock::to_time_t(now);
+
+
+    struct tm *lt = std::localtime(&now_c);
+    if (!lt) {
+        throw std::runtime_error("Could not get local time.");
+    }
+
+
+    char date_buffer[100];
+    // 格式化为 "Day Mon DD HH:MM:SS YYYY "
+    // %a: Day, %b: Mon, %d: DD, %H: HH, %M: MM, %S: SS, %Y: YYYY
+    if (std::strftime(date_buffer, sizeof(date_buffer), "%a %b %d %H:%M:%S %Y", lt) == 0) {
+        throw std::runtime_error("Failed to format time.");
+    }
+
+    // **获取时区偏移量 (TimeZone Offset)**
+    std::stringstream offset_ss;
+
+
+
+    struct tm *gt = std::gmtime(&now_c);
+
+    time_t utc_time = std::mktime(gt);
+    time_t local_time = std::mktime(lt);
+    long offset_seconds = (long)local_time - (long)utc_time;
+
+    int offset_hours = offset_seconds / 3600;
+    int offset_minutes = (std::abs(offset_seconds) / 60) % 60;
+
+    offset_ss << (offset_hours >= 0 ? '+' : '-')
+              << std::setw(2) << std::setfill('0') << std::abs(offset_hours)
+              << std::setw(2) << std::setfill('0') << offset_minutes;
+
+    // 组合最终字符串
+    std::string result = date_buffer;
+    result += " ";
+    result += offset_ss.str();
+
+    return result;
 }

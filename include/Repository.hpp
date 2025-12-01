@@ -16,7 +16,7 @@ public:
     //
     void add(std::string &);
 
-    // void commit(std::vector<std::string>::const_reference value);
+    void commit(std::string &);
     //
     // void rm(std::vector<std::string>::const_reference value);
     //

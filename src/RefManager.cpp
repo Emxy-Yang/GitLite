@@ -13,6 +13,49 @@ std::string RefManager::getBranchPath(const std::string& branchName) const {
     return Utils::join(MASTER_DIR, branchName);
 }
 
+void RefManager::updateRef(const std::string &refName, const std::string &newHash) {
+    // check hash
+    if (newHash.empty() || newHash.length() != 40) {
+        Utils::exitWithMessage("Invalid hash provided for reference update.");
+    }
+
+    std::string refPath;
+
+    //if ref is HEAD
+    if (refName == "HEAD") {
+        //read
+        std::string headContent = Utils::readContentsAsString(HEAD_FILE);
+        if (!headContent.empty() && headContent.back() == '\n') {
+            headContent.pop_back();
+        }
+
+        const std::string refPrefix = "ref: ";
+
+        if (headContent.substr(0, refPrefix.size()) == refPrefix) {
+            //headContent = "ref: refs/heads/master"
+
+            //get "refs/heads/master" and add ".gitlite"
+            std::string symbolicRef = headContent.substr(refPrefix.size());
+            refPath = Utils::join(".gitlite", symbolicRef);
+        } else {
+            //Detached HEAD state: HEAD file comtains only one hashid
+            //此时，新的 Commit 直接覆盖 HEAD 文件本身
+            refPath = HEAD_FILE;
+        }
+    }
+    //refs/heads/branchName state
+    else if (refName.substr(0, 11) == "refs/heads/") {
+        refPath = Utils::join(".gitlite", refName);
+    }
+    else {
+        Utils::exitWithMessage("Unsupported reference name: " + refName);
+        return;
+    }
+
+    //write
+    Utils::writeContents(refPath, newHash + "\n");
+}
+
 std::string RefManager::resolveHead() {
     std::string content = Utils::readContentsAsString(HEAD_FILE);
 

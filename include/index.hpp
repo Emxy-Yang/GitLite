@@ -19,8 +19,13 @@ public:
     bool contains(const std::string& path);
     bool indentical(const std::string& path , Blob&);
 
+    const std::map<std::string, std::string>& getEntries() const {
+        return entries;
+    }
+
     void write();
     void load();
+    void clear();
 
 };
 

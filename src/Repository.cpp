@@ -82,6 +82,53 @@ void Repository::add(std::string & file) {
     idx.write();
 }
 
+void Repository::commit(std::string & message) {
+    if (message.empty()) {
+        Utils::exitWithMessage("Please enter a commit message.");
+    }
+    //init
+    index idx;
+    ObjectDatabase db;
+    RefManager refManager;
+
+    //check entries
+    if (idx.getEntries().empty()) {
+        Utils::exitWithMessage("No changes added to commit.");
+    }
+
+    Commit newCommit;
+    //set metadata
+    std::string timestamp = Utils::getCurrentTimestamp();
+    newCommit.setMetadata(message, timestamp);
+    //set father commit
+    std::string parentHash = refManager.resolveHead();
+    if (!parentHash.empty()) {
+        newCommit.addFather(parentHash);
+
+        //firsly read and copy father commit
+        auto father_commit = std::dynamic_pointer_cast<Commit>(db.readObject(parentHash));
+        if (!father_commit) {
+            Utils::exitWithMessage("Fail to read father commit!");
+        }
+        for (const auto& father_blobs : father_commit->getBlobs()) {
+            newCommit.addBlob(father_blobs.first , father_blobs.second);
+        }
+    }
+
+    //then change blobs according to the entries (staging area)
+    for (const auto& changed_blobs : idx.getEntries()) {
+        newCommit.addBlob(changed_blobs.first , changed_blobs.second);
+    }
+
+    //then write commit and update refs
+    db.writeObject(newCommit);
+    refManager.updateRef("HEAD",newCommit.get_hashid());
+
+    //refresh index
+    idx.clear();
+    idx.write();
+}
+
 std::string  Repository::getGitliteDir() {
     std::string _path = ".gitlite";
     return _path;
