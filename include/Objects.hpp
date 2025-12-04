@@ -49,12 +49,17 @@ public:
     void addBlob(const std::string& path, const std::string& hash) {
         Blobs[path] = hash;
     }
+    void rmBlob(const std::string& path);
 
     // get blob
     const std::map<std::string, std::string>& getBlobs() const {
         return Blobs;
     }
 
+    //see if Commit track the file
+    bool isTracking(const std::string& path) const {
+        return Blobs.find(path) != Blobs.end();
+    }
 };
 
 class Blob:public GitLiteObject {

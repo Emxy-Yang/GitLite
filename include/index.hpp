@@ -8,6 +8,7 @@
 
 class index {
     std::map<std::string, std::string> entries;     //file path & blob hashid
+    std::vector<std::string> removed_entries;  //removed files (path only)
     const std::string INDEX_PATH = ".gitlite/index";
 
 public:
@@ -21,6 +22,9 @@ public:
 
     const std::map<std::string, std::string>& getEntries() const {
         return entries;
+    }
+    const std::vector<std::string>& getRmEntries() const {
+        return removed_entries;
     }
 
     void write();

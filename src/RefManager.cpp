@@ -117,7 +117,6 @@ void RefManager::removeBranch(const std::string& branchName) {
         Utils::exitWithMessage("A branch with that name does not exist.");
     }
 
-    // 防止删除当前所在的分支
     // 如果 HEAD 指向的就是这个分支，则不能删除
     std::string currentBranch = getCurrentBranchName();
     if (currentBranch == branchName) {

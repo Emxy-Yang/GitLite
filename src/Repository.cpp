@@ -119,6 +119,13 @@ void Repository::commit(std::string & message) {
     for (const auto& changed_blobs : idx.getEntries()) {
         newCommit.addBlob(changed_blobs.first , changed_blobs.second);
     }
+    for (const auto & changed_blobs : idx.getRmEntries()) {
+        if (newCommit.getBlobs().find(changed_blobs) != newCommit.getBlobs().end()) {
+            newCommit.rmBlob(changed_blobs);
+        }else {
+            Utils::exitWithMessage("wrongly deleted inexisted file");
+        }
+    }
 
     //then write commit and update refs
     db.writeObject(newCommit);
@@ -126,6 +133,65 @@ void Repository::commit(std::string & message) {
 
     //refresh index
     idx.clear();
+    idx.write();
+}
+
+void Repository::rm(std::string & file_name) {
+    index idx;
+    ObjectDatabase db;
+    RefManager refManager;
+
+    // get current commit state
+    std::string currentCommitHash = refManager.resolveHead();
+    std::shared_ptr<Commit> currentCommit = nullptr;
+    bool isTrackedByCommit = false;
+
+    if (!currentCommitHash.empty()) {
+        //judge if the file being tracked by current commit
+        try {
+            auto obj = db.readObject(currentCommitHash);
+            currentCommit = std::dynamic_pointer_cast<Commit>(obj);
+            if (currentCommit) {
+                //std::cerr<<"exists"<<std::endl;   //debug
+                isTrackedByCommit = currentCommit->isTracking(file_name);
+            }
+        } catch (...) {
+            isTrackedByCommit = false;
+        }
+    }
+
+    // judge if the file is in entries
+    bool isStagedForAddition = idx.contains(file_name);
+
+
+    if (!isStagedForAddition && !isTrackedByCommit) {
+        Utils::exitWithMessage("No reason to remove the file.");
+        return;
+    }
+
+    // Untracked and Staged
+    if (isStagedForAddition && !isTrackedByCommit) {
+        // remove from entries
+        idx.rm_entry(file_name);
+        Utils::message("Unstaged " + file_name);
+    }
+    //Tracked by Current Commit
+    else if (isTrackedByCommit) {
+        idx.rm_entry(file_name);
+
+        //remove from working dialoge
+        if (Utils::exists(file_name)) {
+            if (Utils::restrictedDelete(file_name)) {
+                 Utils::message("Removed " + file_name + " from working directory and staged for deletion.");
+            } else {
+                 Utils::message("Staged " + file_name + " for deletion. Note: Failed to remove file from working directory.");
+            }
+        } else {
+             Utils::message("Staged " + file_name + " for deletion (file already missing).");
+        }
+    }
+
+    //refresh index
     idx.write();
 }
 

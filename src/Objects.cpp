@@ -69,17 +69,19 @@ void Commit::deserialize(const std::string &content) {
 
 
     //left the head & blobs & father & message
-    size_t idx = 1;
+    size_t idx = 0;
 
     // "blobs_of_commit:"
     if (idx < all_lines.size() && all_lines[idx] == "blobs_of_commit:") {
         idx++;
         while (all_lines[idx] != "father_commit:") {
+            //std::cerr<<all_lines[idx]<<std::endl;
             std::stringstream blobline(all_lines[idx]);
             std::string path;
             std::string blob_hash;
-            ss>>path>>blob_hash;
+            blobline>>path>>blob_hash;
             Blobs[path] = blob_hash;
+            //std::cerr<<"path: "<<path<<std::endl;   //debug
             ++idx;
         }
     }else {
@@ -126,6 +128,10 @@ void Commit::addFather(const std::string &father_hash) {
     Father_Commit.emplace_back(father_hash);
 }
 
+void Commit::rmBlob(const std::string &path) {
+    Blobs.erase(path);
+}
+
 std::string Blob::serialize() {
     std::stringstream final_ss;
 
@@ -149,7 +155,7 @@ void Blob::deserialize(const std::string &_content) {
     }
     if (all_lines.empty()) return;
 
-    int idx = 1;
+    int idx = 0;
     while (idx < all_lines.size()) {
         if (!this->content.empty()) {
             this->content += '\n';

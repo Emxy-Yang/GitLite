@@ -35,6 +35,11 @@ void index::write() {
         ss << pair.second << " " << pair.first << "\n";
     }
 
+    const std::string REMOVED_DELIMITER = "----RMD----";
+    for (const auto& path : removed_entries) {
+        ss << path << "\n";
+    }
+
     Utils::writeContents(INDEX_PATH, ss.str());
 }
 
@@ -56,6 +61,10 @@ void index::load() {
         std::string hash;
         std::string path;
         while (data>>hash) {
+            const std::string REMOVED_DELIMITER = "----RMD----";
+            if (hash == REMOVED_DELIMITER) {
+                break;
+            }
             if (hash.length() != 40) {
                 throw GitliteException("a index row must be hash + path");
             }
@@ -63,11 +72,19 @@ void index::load() {
             entries[path] = hash;
             hash.clear() , path.clear();
         }
+        while (data>>path) {
+            if (hash.length() != 40) {
+                throw GitliteException("a index row must be hash + path");
+            }
+            removed_entries.emplace_back(path);
+            hash.clear() , path.clear();
+        }
     }
 }
 
 void index::clear() {
     entries.clear();
+    removed_entries.clear();
 }
 
 

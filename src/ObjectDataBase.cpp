@@ -71,7 +71,7 @@ std::shared_ptr<GitLiteObject> ObjectDatabase::readObject(const std::string& oid
     }
 
     std::string header = raw_data.substr(0, null_byte_pos);
-    std::string content = raw_data.substr(null_byte_pos + 1);
+    std::string content = raw_data.substr(null_byte_pos + 2);
 
     // 解析 Type 和 Size
     std::stringstream header_stream(header);
@@ -79,6 +79,8 @@ std::shared_ptr<GitLiteObject> ObjectDatabase::readObject(const std::string& oid
     size_t size_check;
     header_stream >> type_str >> size_check;
 
+    // std::cerr<<size_check<<std::endl;    //debug
+    // std::cerr<<content.size()<<std::endl;    //debug
     if (size_check != content.size()) {
         throw std::runtime_error("Corrupted object: size mismatch.");
     }
