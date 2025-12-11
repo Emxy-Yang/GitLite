@@ -19,13 +19,13 @@ public:
     void commit(std::string &);
 
     void rm(std::string &);
-    //
-    // void log();
-    //
-    // void globalLog();
-    //
-    // void find(std::vector<std::string>::const_reference value);
-    //
+
+    void log();
+
+    void globalLog();
+
+    void find(const std::string& message);
+
     // void status();
     //
     // void checkoutBranch(std::vector<std::string>::const_reference value);

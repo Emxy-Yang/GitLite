@@ -60,6 +60,18 @@ public:
     bool isTracking(const std::string& path) const {
         return Blobs.find(path) != Blobs.end();
     }
+
+    std::vector<std::string> getFatherCommits() {
+        return Father_Commit;
+    }
+
+    std::string  getTimestamp() {
+        return Commit_Metadata.timestamp;
+    }
+
+    std::string getMessage() {
+        return Commit_Metadata.message;
+    }
 };
 
 class Blob:public GitLiteObject {

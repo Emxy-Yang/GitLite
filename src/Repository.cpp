@@ -195,6 +195,141 @@ void Repository::rm(std::string & file_name) {
     idx.write();
 }
 
+void Repository::log() {
+    ObjectDatabase db;
+    RefManager refManager;
+
+    std::string currentCommitHash = refManager.resolveHead();
+    if (currentCommitHash.empty()) {
+        Utils::exitWithMessage("No commits yet in this repository.");
+    }
+
+    while (!currentCommitHash.empty()) {
+        std::shared_ptr<Commit> currentCommit;
+        try {
+            auto obj = db.readObject(currentCommitHash);
+            currentCommit = std::dynamic_pointer_cast<Commit>(obj);
+
+            if (!currentCommit) {
+                Utils::exitWithMessage("Corrupted object: object at " + currentCommitHash.substr(0, 7) + " is not a Commit.");
+            }
+        } catch (const std::exception& e) {
+            Utils::exitWithMessage("Error reading commit object (" + currentCommitHash.substr(0, 7) + "): " + e.what());
+        }
+
+        //output commit hashid
+        std::cout << "===\ncommit " << currentCommit->get_hashid() << "\n";
+
+        const auto& fathers = currentCommit->getFatherCommits();
+
+        //handle merge
+        if (fathers.size() == 2) {
+            std::cout << "Merge: " << fathers[0].substr(0, 7) << " "
+                      << fathers[1].substr(0, 7) << "\n";
+        }
+
+        //output metadata
+        std::cout << "Date: " << currentCommit->getTimestamp() << "\n";
+        std::cout << currentCommit->getMessage() << "\n";
+        std::cout << "\n";
+
+        //search back
+        if (!fathers.empty()) {
+            currentCommitHash = fathers[0]; //main branch in [0]
+        } else {
+            currentCommitHash.clear();
+        }
+    }
+}
+
+void Repository::globalLog() {
+    ObjectDatabase db;
+
+    const std::string OBJECTS_DIR = ".gitlite/objects";
+    std::vector<std::string> subdirs = Utils::plainFilenamesIn(OBJECTS_DIR);
+
+    for (const std::string& subdir : subdirs) {
+        //.gitlite/objects/da
+        std::string subdir_path = Utils::join(OBJECTS_DIR, subdir);
+        std::vector<std::string> object_files = Utils::plainFilenamesIn(subdir_path);
+
+        for (const std::string& filename : object_files) {
+            std::string commit_hash = subdir + filename;
+            std::shared_ptr<GitLiteObject> obj = nullptr;
+
+            //read from hash
+            try {
+                obj = db.readObject(commit_hash);
+            } catch (const std::exception& e) {
+                continue;
+            }
+
+            //check if it's commit
+            std::shared_ptr<Commit> currentCommit = std::dynamic_pointer_cast<Commit>(obj);
+            if (currentCommit) {
+                //copy from log
+                std::cout << "===\ncommit " << currentCommit->get_hashid() << "\n";
+                const auto& fathers = currentCommit->getFatherCommits();
+
+                if (fathers.size() == 2) {
+                    std::cout << "Merge: " << fathers[0].substr(0, 7) << " "
+                              << fathers[1].substr(0, 7) << "\n";
+                }
+
+                std::cout << "Date: " << currentCommit->getTimestamp() << "\n";
+                std::cout << currentCommit->getMessage() << "\n";
+                std::cout << "\n";
+            }
+        }
+    }
+}
+
+void Repository::find(const std::string &message) {
+    ObjectDatabase db;
+    std::vector<std::string> matching_commits;
+
+    const std::string OBJECTS_DIR = ".gitlite/objects";
+    if (!Utils::isDirectory(OBJECTS_DIR)) {
+        Utils::exitWithMessage("No Gitlite repository found or objects directory is missing.");
+    }
+
+    std::vector<std::string> subdirs = Utils::plainFilenamesIn(OBJECTS_DIR);
+
+    for (const std::string& subdir : subdirs) {
+        std::string subdir_path = Utils::join(OBJECTS_DIR, subdir);
+
+        std::vector<std::string> object_files = Utils::plainFilenamesIn(subdir_path);
+
+        for (const std::string& filename : object_files) {
+            // 重构完整的 Commit ID (OID)，例如：da39a3...
+            std::string commit_hash = subdir + filename;
+
+            std::shared_ptr<GitLiteObject> obj = nullptr;
+
+            try {
+                obj = db.readObject(commit_hash);
+            } catch (const std::exception& e) {
+                continue;
+            }
+
+            std::shared_ptr<Commit> currentCommit = std::dynamic_pointer_cast<Commit>(obj);
+            if (currentCommit) {
+                if (currentCommit->getMessage() == message) {
+                    matching_commits.push_back(currentCommit->get_hashid());
+                }
+            }
+        }
+    }
+
+    if (matching_commits.empty()) {
+        Utils::exitWithMessage("Found no commit with that message.");
+    } else {
+        for (const std::string& hash : matching_commits) {
+            std::cout << hash << "\n";
+        }
+    }
+}
+
 std::string  Repository::getGitliteDir() {
     std::string _path = ".gitlite";
     return _path;
