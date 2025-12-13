@@ -252,8 +252,9 @@ std::vector<std::string> Utils::plainFilenamesIn(const std::string& dirPath) {
     
     struct dirent* entry;
     while ((entry = readdir(dir)) != nullptr) {
-        if (entry->d_type == DT_REG) { // Regular file
-            files.push_back(std::string(entry->d_name));
+        if (entry->d_type == DT_REG || entry->d_type == DT_DIR) { // Regular file
+            if (std::string(entry->d_name) != "." && std::string(entry->d_name) != "..")
+                files.push_back(std::string(entry->d_name));
         }
     }
     

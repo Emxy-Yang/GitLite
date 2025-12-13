@@ -103,3 +103,41 @@ std::shared_ptr<GitLiteObject> ObjectDatabase::readObject(const std::string& oid
         throw std::runtime_error("Unsupported object type: " + type_str);
     }
 }
+
+// 假设已包含 Utils.h
+
+std::string ObjectDatabase::findObjectByPrefix(const std::string& prefix) {
+    if (prefix.length() == 40) {
+        if (Utils::exists(getObjectPath(prefix))) {
+            return prefix;
+        }
+        return "";
+    }
+
+
+    if (prefix.length() < 2) {
+        return "";
+    }
+
+    std::string dirPrefix = prefix.substr(0, 2);
+    std::string filePrefix = prefix.substr(2);
+
+    std::string objectDir = Utils::join(".gitlite/objects", dirPrefix);
+
+    if (!Utils::isDirectory(objectDir)) {
+        return "";
+    }
+
+
+    std::vector<std::string> files = Utils::plainFilenamesIn(objectDir);
+    if (prefix.length() == 2) {
+        return dirPrefix + files[0];
+    }
+    for (const std::string& file : files) {
+        if (file.rfind(filePrefix, 0) == 0) {
+            return dirPrefix + file;
+        }
+    }
+
+    return "";
+}

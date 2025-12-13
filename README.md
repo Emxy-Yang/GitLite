@@ -594,7 +594,6 @@ random.stuff
 本项目将在 wsl 中运行，请你在完成对应部分后打开 wsl依次执行以下命令：
 
 ```bash
-cd gitlite         # 如果当前目录已在gitlite 下可跳过
 rm -rf build/
 mkdir build
 cd build
@@ -607,7 +606,7 @@ make
 同时我们在下发的`testing`文件中提供了部分样例供各位调试，这也会作为最后的量化得分结果，具体操作是：
 
 ```bash
-cd gitlite         # 如果当前目录已在gitlite 下可跳过
+cd ..         # 如果当前目录已在gitlite 下可跳过
 cd testing
 python3 tester.py samples/*.in
 ```

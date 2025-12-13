@@ -127,7 +127,17 @@ void RefManager::removeBranch(const std::string& branchName) {
     Utils::restrictedDelete(path);
 }
 
+std::vector<std::string> RefManager::getAllBranchNames() const {
 
+    if (!Utils::isDirectory(MASTER_DIR)) {
+        return {};
+    }
+
+
+    std::vector<std::string> branchNames = Utils::plainFilenamesIn(MASTER_DIR);
+
+    return branchNames;
+}
 
 
 

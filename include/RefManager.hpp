@@ -28,6 +28,8 @@ public:
 
     // 删除分支 (git rm-branch )
     void removeBranch(const std::string& branchName);
+
+    std::vector<std::string> getAllBranchNames() const;
 };
 
 class Ref {

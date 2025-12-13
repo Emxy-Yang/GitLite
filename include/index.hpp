@@ -1,6 +1,7 @@
 
 #ifndef GITLITE_INDEX_HPP
 #define GITLITE_INDEX_HPP
+#include <algorithm>
 #include <map>
 #include <string>
 #include<memory>
@@ -15,9 +16,13 @@ public:
     index(){ load();}
 
     void add_entry(std::string path , std::string hash);
-    void rm_entry(const std::string& path);
+    void add_rm_entry(std::string path);
 
-    bool contains(const std::string& path);
+    void rm_entry(const std::string& path);
+    void rm_rmentry(const std::string & file);
+
+
+    bool contains_in_entries(const std::string& path);
     bool indentical(const std::string& path , Blob&);
 
     const std::map<std::string, std::string>& getEntries() const {
@@ -26,6 +31,12 @@ public:
     const std::vector<std::string>& getRmEntries() const {
         return removed_entries;
     }
+
+
+    bool contains_in_removed(const std::string& path) const {
+        return find(removed_entries.begin(),removed_entries.end(),path) != removed_entries.end();
+    }
+
 
     void write();
     void load();

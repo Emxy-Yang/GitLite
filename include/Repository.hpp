@@ -26,14 +26,12 @@ public:
 
     void find(const std::string& message);
 
-    // void status();
-    //
-    // void checkoutBranch(std::vector<std::string>::const_reference value);
-    //
-    // void checkoutFile(std::vector<std::string>::const_reference value);
-    //
-    // void checkoutFileInCommit(std::vector<std::string>::const_reference value, std::vector<std::string>::const_reference basic_string);
-    //
+    void status();
+
+
+    void checkoutFile(const std::string& fileName);
+    void checkoutBranch(const std::string& branchName);
+    void checkoutFileInCommit(const std::string& commitId, const std::string& fileName);
     // void branch(std::vector<std::string>::const_reference value);
     //
     // void rmBranch(std::vector<std::string>::const_reference value);

@@ -135,9 +135,9 @@ void Commit::rmBlob(const std::string &path) {
 std::string Blob::serialize() {
     std::stringstream final_ss;
 
-    size_t size = content.size();
+    size_t size = content.size() + 1;
 
-    final_ss<<"Blob "<<size<<'\0'<<'\n';
+    final_ss<<"blob "<<size<<'\0'<<'\n';
     final_ss<<content<<'\n';
 
     return final_ss.str();

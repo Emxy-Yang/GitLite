@@ -9,11 +9,19 @@ void index::add_entry(std::string path , std::string hash) {
     entries[path] = std::move(hash);
 }
 
+void index::add_rm_entry(std::string path) {
+    removed_entries.emplace_back(path);
+}
+
 void index::rm_entry(const std::string& path) {
     entries.erase(path);
 }
 
-bool index::contains(const std::string& path) {
+void index::rm_rmentry(const std::string &file) {
+    removed_entries.erase(std::find(removed_entries.begin(),removed_entries.end(),file));
+}
+
+bool index::contains_in_entries(const std::string& path) {
     return entries.find(path) != entries.end();
 }
 
@@ -35,7 +43,8 @@ void index::write() {
         ss << pair.second << " " << pair.first << "\n";
     }
 
-    const std::string REMOVED_DELIMITER = "----RMD----";
+    const std::string REMOVED_DELIMITER = "----RMD----\n";
+    ss<<REMOVED_DELIMITER;
     for (const auto& path : removed_entries) {
         ss << path << "\n";
     }
@@ -73,9 +82,6 @@ void index::load() {
             hash.clear() , path.clear();
         }
         while (data>>path) {
-            if (hash.length() != 40) {
-                throw GitliteException("a index row must be hash + path");
-            }
             removed_entries.emplace_back(path);
             hash.clear() , path.clear();
         }

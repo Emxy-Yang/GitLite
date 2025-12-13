@@ -32,6 +32,8 @@ public:
      // read & deseriaze
      // param OID  return obj
     std::shared_ptr<GitLiteObject> readObject(const std::string& oid);
+
+    std::string findObjectByPrefix(const std::string& prefix);
 };
 
 
