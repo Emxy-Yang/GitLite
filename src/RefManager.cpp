@@ -39,7 +39,6 @@ void RefManager::updateRef(const std::string &refName, const std::string &newHas
             refPath = Utils::join(".gitlite", symbolicRef);
         } else {
             //Detached HEAD state: HEAD file comtains only one hashid
-            //此时，新的 Commit 直接覆盖 HEAD 文件本身
             refPath = HEAD_FILE;
         }
     }
@@ -56,68 +55,109 @@ void RefManager::updateRef(const std::string &refName, const std::string &newHas
     Utils::writeContents(refPath, newHash + "\n");
 }
 
+void RefManager::updateRemoteRef(const std::string& remoteName, const std::string& remoteBranchName, const std::string& newHash) {
+    if (newHash.empty() || newHash.length() != 40) {
+        Utils::exitWithMessage("Invalid hash provided for remote reference update.");
+    }
+
+    // build path: .gitlite/refs/remotes/[remoteName]
+    std::string remoteRefDir = Utils::join(".gitlite", "refs");
+    remoteRefDir = Utils::join(remoteRefDir, "remotes");
+    remoteRefDir = Utils::join(remoteRefDir, remoteName);
+
+    if (!Utils::exists(remoteRefDir)) {
+        Utils::createDirectories(remoteRefDir);
+    }
+
+    // .gitlite/refs/remotes/[remoteName]/[remoteBranchName]
+    std::string fullPath = Utils::join(remoteRefDir, remoteBranchName);
+
+    Utils::writeContents(fullPath, newHash + "\n");
+}
+
+
+std::string RefManager::getRemoteTrackingBranchPath(const std::string& remoteTrackingName) const {
+    size_t slashPos = remoteTrackingName.find('/');
+
+    //  remotename/branchname
+    if (slashPos == std::string::npos || slashPos == 0 || slashPos == remoteTrackingName.length() - 1) {
+        return "";
+    }
+
+    std::string remoteName = remoteTrackingName.substr(0, slashPos);
+    std::string branchName = remoteTrackingName.substr(slashPos + 1);
+
+
+    std::string fullPath = Utils::join(".gitlite", "refs");
+    fullPath = Utils::join(fullPath,"remotes");
+    fullPath = Utils::join(fullPath, remoteName);
+    fullPath = Utils::join(fullPath, branchName);
+
+    if (Utils::exists(fullPath)) {
+        return fullPath;
+    }
+
+    return "";
+}
+
+//ref: refs/heads/master
 std::string RefManager::resolveHead() {
     std::string content = Utils::readContentsAsString(HEAD_FILE);
 
     if (!content.empty() && content.back() == '\n') content.pop_back();
 
     if (content.substr(0, 5) == "ref: ") {
-        // HEAD 指向分支，读取该分支的 Hash
-        std::string refPath = ".gitlite/" + content.substr(5);
-        if (!Utils::exists(refPath)) return ""; // 空仓库情况
+        std::string refPath = ".gitlite/" + content.substr(5);   //dir is like ".gitlite/refs/heads/[branch name]"
+        if (!Utils::exists(refPath)) return "";
         std::string hash = Utils::readContentsAsString(refPath);
 
-        if (!hash.empty() && hash.back() == '\n') hash.pop_back();
+        if (!hash.empty() && hash.back() == '\n') hash.pop_back();  //debug
         return hash;
     } else {
-        // Detached HEAD，直接返回 Hash
+        // Detached HEAD, return hash
         return content;
     }
 }
 
+//ref: refs/heads/master
 std::string RefManager::getCurrentBranchName() {
     std::string content = Utils::readContentsAsString(HEAD_FILE);
     if (content.substr(0, 5) == "ref: ") {
-        // 提取 refs/heads/master 中的 master
         size_t lastSlash = content.find_last_of('/');
         std::string name = content.substr(lastSlash + 1);
         if (!name.empty() && name.back() == '\n') name.pop_back();
         return name;
     }
-    return ""; // Detached HEAD 状态没有分支名
+    return ""; // Detached HEAD has no branch name
 }
 
 void RefManager::createBranch(const std::string& branchName) {
     std::string path = getBranchPath(branchName);
 
-    // 检查分支是否已存在
     if (Utils::exists(path)) {
         Utils::exitWithMessage("A branch with that name already exists.");
     }
 
-    // 获取当前 HEAD 指向的 Commit Hash
     std::string currentCommitHash = resolveHead();
     if (currentCommitHash.empty()) {
         Utils::exitWithMessage("No commit to branch from (repo is empty).");
     }
 
-    // 创建 Ref
-    // 分支名作为文件名，target 是当前的 Hash，false 表示直接引用
+    // create  Reference
     Ref newBranch(branchName, currentCommitHash, false);
 
-    // 写入 (.gitlite/refs/heads/branchName)
+    // write to .gitlite/refs/heads/[branchName]
     Utils::writeContents(path, newBranch.serialize());
 }
 
 void RefManager::removeBranch(const std::string& branchName) {
     std::string path = getBranchPath(branchName);
 
-    // 检查分支是否存在
     if (!Utils::exists(path)) {
         Utils::exitWithMessage("A branch with that name does not exist.");
     }
 
-    // 如果 HEAD 指向的就是这个分支，则不能删除
+    //if HEAD point to the branch, then the branch cant br removed
     std::string currentBranch = getCurrentBranchName();
     if (currentBranch == branchName) {
         Utils::exitWithMessage("Cannot remove the current branch.");
@@ -139,6 +179,50 @@ std::vector<std::string> RefManager::getAllBranchNames() const {
     return branchNames;
 }
 
+
+
+RemoteRefManager::RemoteRefManager(const std::string& gitlite_root_dir)
+    : remote_root_dir(gitlite_root_dir) {
+    if (!remote_root_dir.empty() && remote_root_dir.back() == '/') {
+        remote_root_dir.pop_back();
+    }
+}
+
+std::string RemoteRefManager::getRefPath(const std::string& refName) const {
+    // [remote_root_dir]/refs/heads/master
+    return Utils::join(remote_root_dir, refName);
+}
+
+std::string RemoteRefManager::resolveRef(const std::string& refName) const {
+    std::string refPath = getRefPath(refName);
+
+    if (!Utils::exists(refPath)) {
+        return "";
+    }
+
+    std::string content = Utils::readContentsAsString(refPath);
+
+    if (!content.empty() && content.back() == '\n') {
+        content.pop_back();
+    }                                                                                                                 //debug
+    content.erase(std::remove_if(content.begin(), content.end(), ::isspace), content.end());   //debug
+
+    if (content.length() == 40) {
+        return content;
+    }
+    return "";
+}
+
+//remote ref only have detached ref
+void RemoteRefManager::updateRef(const std::string& refName, const std::string& newHash) {
+    if (newHash.empty() || newHash.length() != 40) {
+        Utils::exitWithMessage("Invalid hash provided for reference update.");
+    }
+
+    std::string refPath = getRefPath(refName);
+
+    Utils::writeContents(refPath, newHash + "\n");
+}
 
 
 

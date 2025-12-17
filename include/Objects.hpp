@@ -4,7 +4,9 @@
 #include <string>
 #include <vector>
 
+#include "index.hpp"
 
+class index;
 //GitLiteObject class is the base class for all git classes
 class GitLiteObject {
 protected:
@@ -51,8 +53,14 @@ public:
     }
     void rmBlob(const std::string& path);
 
+    void setBlobsFromIndex(index &idx);
+
     // get blob
     const std::map<std::string, std::string>& getBlobs() const {
+        return Blobs;
+    }
+
+    std::map<std::string, std::string>& getBlobsRef()  {
         return Blobs;
     }
 

@@ -36,16 +36,16 @@ int main(int argc, char* argv[]) {
         checkArgsNum(args, 1);
         bloop.init();
     }
-    // else if (firstArg == "add-remote") {
-    //     checkCWD();
-    //     checkArgsNum(args, 3);
-    //     bloop.addRemote(args[1], args[2]);
-    // }
-    // else if (firstArg == "rm-remote") {
-    //     checkCWD();
-    //     checkArgsNum(args, 2);
-    //     bloop.rmRemote(args[1]);
-    // }
+    else if (firstArg == "add-remote") {
+        checkCWD();
+        checkArgsNum(args, 3);
+        bloop.addRemote(args[1], args[2]);
+    }
+    else if (firstArg == "rm-remote") {
+        checkCWD();
+        checkArgsNum(args, 2);
+        bloop.rmRemote(args[1]);
+    }
     else if (firstArg == "add") {
         checkCWD();
         checkArgsNum(args, 2);
@@ -99,41 +99,41 @@ int main(int argc, char* argv[]) {
             Utils::exitWithMessage("Incorrect operands.");
         }
     }
-    // else if (firstArg == "branch") {
-    //     checkCWD();
-    //     checkArgsNum(args, 2);
-    //     bloop.branch(args[1]);
-    // }
-    // else if (firstArg == "rm-branch") {
-    //     checkCWD();
-    //     checkArgsNum(args, 2);
-    //     bloop.rmBranch(args[1]);
-    // }
-    // else if (firstArg == "reset") {
-    //     checkCWD();
-    //     checkArgsNum(args, 2);
-    //     bloop.reset(args[1]);
-    // }
-    // else if (firstArg == "merge") {
-    //     checkCWD();
-    //     checkArgsNum(args, 2);
-    //     bloop.merge(args[1]);
-    // }
-    // else if (firstArg == "push") {
-    //     checkCWD();
-    //     checkArgsNum(args, 3);
-    //     bloop.push(args[1], args[2]);
-    // }
-    // else if (firstArg == "fetch") {
-    //     checkCWD();
-    //     checkArgsNum(args, 3);
-    //     bloop.fetch(args[1], args[2]);
-    // }
-    // else if (firstArg == "pull") {
-    //     checkCWD();
-    //     checkArgsNum(args, 3);
-    //     bloop.pull(args[1], args[2]);
-    // }
+    else if (firstArg == "branch") {
+        checkCWD();
+        checkArgsNum(args, 2);
+        bloop.branch(args[1]);
+    }
+    else if (firstArg == "rm-branch") {
+        checkCWD();
+        checkArgsNum(args, 2);
+        bloop.rm_branch(args[1]);
+    }
+    else if (firstArg == "reset") {
+        checkCWD();
+        checkArgsNum(args, 2);
+        bloop.reset(args[1]);
+    }
+    else if (firstArg == "merge") {
+        checkCWD();
+        checkArgsNum(args, 2);
+        bloop.merge(args[1]);
+    }
+    else if (firstArg == "push") {
+        checkCWD();
+        checkArgsNum(args, 3);
+        bloop.push(args[1], args[2]);
+    }
+    else if (firstArg == "fetch") {
+        checkCWD();
+        checkArgsNum(args, 3);
+        bloop.fetch(args[1], args[2]);
+    }
+    else if (firstArg == "pull") {
+        checkCWD();
+        checkArgsNum(args, 3);
+        bloop.pull(args[1], args[2]);
+    }
     else {
         std::cout << "No command with that name exists." << std::endl;
         return 0;

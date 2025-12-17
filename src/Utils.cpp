@@ -161,9 +161,9 @@ bool Utils::restrictedDelete(const std::string& filepath) {
     std::string parentDir = (pos == std::string::npos) ? "." : filepath.substr(0, pos);
     std::string gitliteDir = parentDir + "/.gitlite";
 
-    if (!isDirectory(gitliteDir)) {
-        throw std::invalid_argument("not .gitlite working directory");
-    }
+    // if (!isDirectory(gitliteDir)) {
+    //     throw std::invalid_argument("not .gitlite working directory");
+    // }
     
     if (isFile(filepath)) {
         return remove(filepath.c_str()) == 0;
@@ -384,3 +384,5 @@ std::string Utils::getCurrentTimestamp() {
 
     return result;
 }
+
+

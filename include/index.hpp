@@ -7,6 +7,7 @@
 #include<memory>
 #include"Objects.hpp"
 
+class Blob;
 class index {
     std::map<std::string, std::string> entries;     //file path & blob hashid
     std::vector<std::string> removed_entries;  //removed files (path only)

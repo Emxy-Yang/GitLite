@@ -17,19 +17,35 @@ public:
     std::string getBranchPath(const std::string& branchName) const;
     void updateRef(const std::string& refName, const std::string& newHash);
 
+    void updateRemoteRef(const std::string &remoteName, const std::string &remoteBranchName,
+                         const std::string &newHash);
+
+    std::string getRemoteTrackingBranchPath(const std::string &remoteTrackingName) const;
+
     // 解析 HEAD
     std::string resolveHead();
 
-    // 获取当前分支名
     std::string getCurrentBranchName();
 
-    //  创建分支
     void createBranch(const std::string& branchName);
 
-    // 删除分支 (git rm-branch )
+    //  rm-branch
     void removeBranch(const std::string& branchName);
 
     std::vector<std::string> getAllBranchNames() const;
+};
+
+
+class RemoteRefManager {
+private:
+    std::string remote_root_dir;
+    std::string getRefPath(const std::string& refName) const;
+public:
+    explicit RemoteRefManager(const std::string& gitlite_root_dir);
+
+    std::string resolveRef(const std::string& refName) const;
+
+    void updateRef(const std::string& refName, const std::string& newHash);
 };
 
 class Ref {
@@ -47,5 +63,7 @@ public:
     std::string serialize() const ;
 
 };
+
+
 
 #endif //GITLITE_REFMANAGER_HPP

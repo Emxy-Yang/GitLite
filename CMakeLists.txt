@@ -17,7 +17,9 @@ add_executable(gitlite
         src/RefManager.cpp
         include/RefManager.hpp
         src/index.cpp
-        include/index.hpp)
+        include/index.hpp
+        src/RemoteManager.cpp
+        include/RemoteManager.hpp)
 
 
 target_include_directories(gitlite

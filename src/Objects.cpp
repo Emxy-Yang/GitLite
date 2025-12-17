@@ -5,6 +5,7 @@
 #include "Def.hpp"
 #include "Utils.h"
 #include "GitliteException.h"
+#include "index.hpp"
 
 void GitLiteObject::set_hash(std::string _hash) {
     hashid = std::move(_hash);
@@ -130,6 +131,16 @@ void Commit::addFather(const std::string &father_hash) {
 
 void Commit::rmBlob(const std::string &path) {
     Blobs.erase(path);
+}
+
+void Commit::setBlobsFromIndex(index& idx) {
+    for (const auto& changed_blobs : idx.getEntries()) {
+        addBlob(changed_blobs.first , changed_blobs.second);
+    }
+
+    for (const std::string& filePath : idx.getRmEntries()) {
+        rmBlob(filePath);
+    }
 }
 
 std::string Blob::serialize() {
