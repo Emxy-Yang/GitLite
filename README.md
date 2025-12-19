@@ -43,7 +43,7 @@
     * **关键功能**: 解析 `HEAD` (resolveHead)，切换分支，更新引用。
 
 * **`RemoteManager`**
-    * **作用**: 维护远程仓库的别名映射（如 `origin` -> `../remote_repo`）。
+    * **作用**: 维护远程仓库的别名映射.
     * **持久化**: 读写 `.gitlite/remotes` 文件。
 
 ### 1.4 command实现
@@ -56,9 +56,9 @@
 ## 2. 核心算法与工作原理
 
 ### 2.1 三向合并 (Three-Way Merge)
-`merge` 操作不仅仅是简单的文件覆盖，而是基于**最近公共祖先 (Split Point)** 的智能合并。
+`merge` 操作不仅仅是简单的文件覆盖，而是基于** Split Point ** 的智能合并。
 
-1.  **查找公共祖先**: 使用 BFS (广度优先搜索) 遍历 Commit 图，找到当前分支 (`Current`) 和目标分支 (`Given`) 的最近公共祖先 (`Split`)。
+1.  **查找公共祖先**: 遍历 Commit 图，找到当前分支 (`Current`) 和目标分支 (`Given`) 的最近公共祖先 (`Split`)。
 2.  **文件比对规则**:
     * **新增**: 仅在 Current 或 Given 中存在的文件，将被保留。
     * **修改**:

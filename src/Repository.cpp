@@ -1081,7 +1081,7 @@ std::string Repository::findCommonAncestor(const std::string& hash1, const std::
     queue1.push(hash1);
     ancestors1.insert(hash1);
 
-    //handle multi-father situation (如菱形结构）
+    //handle multi-father situation (如菱形结构)
     while (!queue1.empty()) {
         std::string currentHash = queue1.front();
         queue1.pop();
@@ -1130,7 +1130,6 @@ std::string Repository::findCommonAncestor(const std::string& hash1, const std::
             }
         }
     }
-
     return "";
 }
 
@@ -1202,9 +1201,7 @@ void Repository::push(const std::string& remoteName, const std::string& remoteBr
     std::string remote_hash = remoteRefManager.resolveRef(remote_ref_name);
 
     if (remote_hash.empty()) {
-        // IV. 新建分支 (首次推送)
-        // 从 initial commit 到 local_hash 的所有对象都需要复制，这里简化为复制整个本地仓库
-        // 实际实现应从最初的 Commit 开始遍历。我们使用一个空哈希作为起点。
+        //新建分支 (首次推送)
         traverseAndCopy("", local_hash, localDB, remote_path);
 
         // 在远程创建新分支并指向本地 HEAD
@@ -1213,7 +1210,7 @@ void Repository::push(const std::string& remoteName, const std::string& remoteBr
         return;
     }
 
-    // II. Fast-Forward 检查：检查远程 HEAD 是否是本地 HEAD 的祖先
+    //Fast-Forward 检查：检查远程 HEAD 是否是本地 HEAD 的祖先
     try {
         localDB.readObject(remote_hash);
     } catch (...) {
@@ -1267,19 +1264,18 @@ void Repository::fetch(const std::string& remoteName, const std::string& remoteB
         std::string current_hash = q.front();
         q.pop();
 
-        // 1. 复制当前 Commit 对象 (从远程复制到本地)
         remoteDB.copyToLocal(current_hash, localDB);
 
-        // 2. 读取对象以获取其关联的 Blob 和父级 Commit
+        //读取对象以获取其关联的 Blob 和父级 Commit
         std::shared_ptr<Commit> commit = std::dynamic_pointer_cast<Commit>(remoteDB.readObject(current_hash));
         if (!commit) continue;
 
-        // 3. 复制 Commit 关联的 Blob 对象
+        //复制 Commit 关联的 Blob 对象
         for (const auto& pair : commit->getBlobs()) {
-            remoteDB.copyToLocal(pair.second, localDB); // 🚨 调用 RemoteObjectDatabase::copyToLocal
+            remoteDB.copyToLocal(pair.second, localDB);
         }
 
-        // 4. 遍历父级 Commit
+        //遍历父级 Commit
         for (const std::string& parent_hash : commit->getFatherCommits()) {
             if (visited.find(parent_hash) == visited.end()) {
                 visited.insert(parent_hash);
