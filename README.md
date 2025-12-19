@@ -6,7 +6,11 @@
 所有可持久化的数据单元均继承自 `GitLiteObject` 基类。
 
 * **`GitLiteObject` (抽象基类)**
-    * **作用**: 定义了所有 Git 对象的通用接口，包括序列化 (`serialize`) 和反序列化 (`deserialize`)。
+    * **作用**: 定义了所有 Git 对象的通用接口，包括序列化 (`serialize`) 和反序列化 (`deserialize`)。 
+    * ````
+      序列化方式：type + size + '\0' + '\n' + content
+      对于commit：以"blobs of commit" 和 "fathers of commit" 分隔
+      ````
     * **关键变量**: `hashid` (对象的 SHA-1 哈希值)。
 
 * **`Blob`**
@@ -126,6 +130,7 @@ Gitlite 的状态完全保存在项目根目录下的 `.gitlite` 隐藏文件夹
     `index` 文件以纯文本形式存储：
     * 第一部分记录 `entries`（路径与哈希的对应关系）。
     * 第二部分记录 `removed_entries`（计划在下次提交中删除的文件路径列表）。
+    * 中间以"---RMD---"分隔。
 
 ### 3.3 状态记录机制 (State Management)
 Gitlite 通过精确的流程控制来记录和转换程序状态：
